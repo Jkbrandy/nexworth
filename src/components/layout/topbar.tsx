@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, ShieldAlert, Clock, Settings, LogOut, Bell, ChevronDown, type LucideIcon } from "lucide-react";
+import { ShieldCheck, ShieldAlert, Clock, Settings, LogOut, Bell, ChevronDown, Menu, type LucideIcon } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -65,7 +65,7 @@ const merchantStatusLabel: Record<MerchantStatus, string> = {
   rejected: "Rejected",
 };
 
-export function Topbar({ user }: { user: SessionUser }) {
+export function Topbar({ user, onMenuClick }: { user: SessionUser; onMenuClick?: () => void }) {
   const router = useRouter();
   const isMerchant = user.role === "merchant";
   const merchantStatus = user.merchantStatus ?? "pending";
@@ -85,30 +85,41 @@ export function Topbar({ user }: { user: SessionUser }) {
   }
 
   return (
-    <header className="flex h-18 items-center justify-between gap-3 border-b bg-background px-8">
-      {isMerchant ? (
-        merchantStatus === "active" ? (
-          <span className="flex items-center gap-1.5 text-base font-medium text-primary">
-            <StatusIcon className="h-5 w-5" /> {merchantStatusLabel[merchantStatus]}
-          </span>
-        ) : (
-          <Badge variant="outline" className="text-sm">
-            <StatusIcon className="h-4 w-4" />
-            {merchantStatusLabel[merchantStatus]}
-          </Badge>
-        )
-      ) : user.status === "verified" ? (
-        <span className="flex items-center gap-1.5 text-base font-medium text-primary">
-          <StatusIcon className="h-5 w-5" /> Account Verified
-        </span>
-      ) : (
-        <Badge variant="outline" className="capitalize text-sm">
-          <StatusIcon className="h-4 w-4" />
-          {user.status}
-        </Badge>
-      )}
+    <header className="flex h-18 items-center justify-between gap-2 border-b bg-background px-4 md:px-8">
+      <div className="flex min-w-0 items-center gap-2">
+        <button
+          onClick={onMenuClick}
+          aria-label="Open menu"
+          className="-ml-1 flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-foreground/80 transition-colors hover:bg-muted hover:text-foreground md:hidden"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <div className="min-w-0 truncate">
+          {isMerchant ? (
+            merchantStatus === "active" ? (
+              <span className="flex items-center gap-1.5 truncate text-base font-medium text-primary">
+                <StatusIcon className="h-5 w-5 shrink-0" /> <span className="truncate">{merchantStatusLabel[merchantStatus]}</span>
+              </span>
+            ) : (
+              <Badge variant="outline" className="text-sm">
+                <StatusIcon className="h-4 w-4 shrink-0" />
+                <span className="truncate">{merchantStatusLabel[merchantStatus]}</span>
+              </Badge>
+            )
+          ) : user.status === "verified" ? (
+            <span className="flex items-center gap-1.5 truncate text-base font-medium text-primary">
+              <StatusIcon className="h-5 w-5 shrink-0" /> <span className="truncate">Account Verified</span>
+            </span>
+          ) : (
+            <Badge variant="outline" className="capitalize text-sm">
+              <StatusIcon className="h-4 w-4 shrink-0" />
+              <span className="truncate">{user.status}</span>
+            </Badge>
+          )}
+        </div>
+      </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-3">
         <div className="flex items-center gap-1">
           <ThemeToggle />
           <DropdownMenu onOpenChange={(open) => open && refresh()}>
@@ -159,8 +170,8 @@ export function Topbar({ user }: { user: SessionUser }) {
                 {initials(user.name)}
               </AvatarFallback>
             </Avatar>
-            <span className="text-base font-medium">{user.name.split(" ")[0]}</span>
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            <span className="hidden text-base font-medium sm:inline">{user.name.split(" ")[0]}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-64 space-y-1">
             <div className="flex flex-col gap-0.5 px-2 py-2">

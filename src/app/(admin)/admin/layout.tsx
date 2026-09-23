@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Topbar } from "@/components/layout/topbar";
+import { PortalShell } from "@/components/layout/portal-shell";
 import { PageLoader } from "@/components/page-loader";
 import { useSession } from "@/hooks/use-session";
 
@@ -27,12 +26,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar variant="admin" />
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar user={user} />
-        <main className="flex-1 overflow-y-auto bg-muted/30 p-8">{children}</main>
-      </div>
-    </div>
+    <PortalShell variant="admin" user={user}>
+      {children}
+    </PortalShell>
   );
 }

@@ -72,10 +72,11 @@ const merchantNav: NavItem[] = [
 
 const merchantBottomNav: NavItem[] = [{ href: "/merchant/settings", label: "Settings", icon: Settings }];
 
-function NavLink({ item, active }: { item: NavItem; active: boolean }) {
+function NavLink({ item, active, onNavigate }: { item: NavItem; active: boolean; onNavigate?: () => void }) {
   return (
     <Link
       href={item.href}
+      onClick={onNavigate}
       className={cn(
         "flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium transition-colors",
         active ? "bg-violet-600 text-white" : "text-white/70 hover:bg-white/5 hover:text-white",
@@ -87,7 +88,16 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   );
 }
 
-export function Sidebar({ variant = "user" }: { variant?: "user" | "admin" | "merchant" }) {
+export function Sidebar({
+  variant = "user",
+  open = false,
+  onClose,
+}: {
+  variant?: "user" | "admin" | "merchant";
+  /** Whether the mobile off-canvas drawer is open. Ignored at `md:` and up, where the sidebar is always visible. */
+  open?: boolean;
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const items = variant === "admin" ? adminNav : variant === "merchant" ? merchantNav : userNav;
@@ -105,43 +115,66 @@ export function Sidebar({ variant = "user" }: { variant?: "user" | "admin" | "me
   }
 
   return (
-    <aside className="flex h-screen w-72 shrink-0 flex-col justify-between bg-[#0f0a2e] px-4 py-6 text-white">
-      <div>
-        <Link
-          href={variant === "admin" ? "/admin" : variant === "merchant" ? "/merchant/redeem" : "/dashboard"}
-          className="block px-2"
-        >
-          <Image src="/nexworth_brand_logos/nexworth-logo-white.png" alt="Nexworth" width={160} height={26} priority />
-        </Link>
-        {variant === "admin" && (
-          <p className="mt-1.5 flex items-center gap-1.5 px-2 text-sm text-white/50">
-            <ShieldCheck className="h-4 w-4" /> Admin console
-          </p>
+    <>
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex h-screen w-72 shrink-0 flex-col justify-between bg-[#0f0a2e] px-4 py-6 text-white transition-transform duration-200 ease-in-out md:static md:z-auto md:translate-x-0",
+          open ? "translate-x-0" : "-translate-x-full",
         )}
-        {variant === "merchant" && (
-          <p className="mt-1.5 flex items-center gap-1.5 px-2 text-sm text-white/50">
-            <Store className="h-4 w-4" /> Merchant portal
-          </p>
-        )}
+      >
+        <div>
+          <Link
+            href={variant === "admin" ? "/admin" : variant === "merchant" ? "/merchant/redeem" : "/dashboard"}
+            className="block px-2"
+            onClick={onClose}
+          >
+            <Image src="/nexworth_brand_logos/nexworth-logo-white.png" alt="Nexworth" width={160} height={26} priority />
+          </Link>
+          {variant === "admin" && (
+            <p className="mt-1.5 flex items-center gap-1.5 px-2 text-sm text-white/50">
+              <ShieldCheck className="h-4 w-4" /> Admin console
+            </p>
+          )}
+          {variant === "merchant" && (
+            <p className="mt-1.5 flex items-center gap-1.5 px-2 text-sm text-white/50">
+              <Store className="h-4 w-4" /> Merchant portal
+            </p>
+          )}
 
-        <nav className="mt-8 space-y-1">
-          {items.map((item) => (
-            <NavLink key={item.href} item={item} active={pathname === item.href} />
-          ))}
-        </nav>
-      </div>
+          <nav className="mt-8 space-y-1">
+            {items.map((item) => (
+              <NavLink key={item.href} item={item} active={pathname === item.href} onNavigate={onClose} />
+            ))}
+          </nav>
+        </div>
 
-      {variant === "user" ? (
-        <nav className="space-y-1">
-          {userBottomNav.map((item) => (
-            <NavLink key={item.href} item={item} active={pathname === item.href} />
-          ))}
-        </nav>
-      ) : variant === "merchant" ? (
-        <nav className="space-y-1">
-          {merchantBottomNav.map((item) => (
-            <NavLink key={item.href} item={item} active={pathname === item.href} />
-          ))}
+        {variant === "user" ? (
+          <nav className="space-y-1">
+            {userBottomNav.map((item) => (
+              <NavLink key={item.href} item={item} active={pathname === item.href} onNavigate={onClose} />
+            ))}
+          </nav>
+        ) : variant === "merchant" ? (
+          <nav className="space-y-1">
+            {merchantBottomNav.map((item) => (
+              <NavLink key={item.href} item={item} active={pathname === item.href} onNavigate={onClose} />
+            ))}
+            <button
+              onClick={() => setConfirmLogoutOpen(true)}
+              className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-white/70 transition-colors hover:bg-white/5 hover:text-white"
+            >
+              <LogOut className="h-5 w-5" />
+              Log out
+            </button>
+          </nav>
+        ) : (
           <button
             onClick={() => setConfirmLogoutOpen(true)}
             className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-white/70 transition-colors hover:bg-white/5 hover:text-white"
@@ -149,31 +182,23 @@ export function Sidebar({ variant = "user" }: { variant?: "user" | "admin" | "me
             <LogOut className="h-5 w-5" />
             Log out
           </button>
-        </nav>
-      ) : (
-        <button
-          onClick={() => setConfirmLogoutOpen(true)}
-          className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-white/70 transition-colors hover:bg-white/5 hover:text-white"
-        >
-          <LogOut className="h-5 w-5" />
-          Log out
-        </button>
-      )}
+        )}
 
-      <AlertDialog open={confirmLogoutOpen} onOpenChange={setConfirmLogoutOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Log out?</AlertDialogTitle>
-            <AlertDialogDescription>You&apos;ll need to sign in again to access your account.</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" onClick={handleLogout} disabled={loggingOut}>
-              {loggingOut ? "Logging out..." : "Log out"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </aside>
+        <AlertDialog open={confirmLogoutOpen} onOpenChange={setConfirmLogoutOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Log out?</AlertDialogTitle>
+              <AlertDialogDescription>You&apos;ll need to sign in again to access your account.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction variant="destructive" onClick={handleLogout} disabled={loggingOut}>
+                {loggingOut ? "Logging out..." : "Log out"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </aside>
+    </>
   );
 }
