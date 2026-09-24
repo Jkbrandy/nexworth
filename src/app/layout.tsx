@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToastContainer } from "@/components/theme-toast-container";
 import { SessionExpiryModal } from "@/components/session-expiry-modal";
 import { SessionProvider } from "@/hooks/use-session";
+import { DEFAULT_OG_IMAGES, SITE_NAME } from "@/lib/seo";
 
 const rethinkSans = Rethink_Sans({
   variable: "--font-rethink-sans",
@@ -18,8 +19,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nexworth",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
   description: "A trusted access and opportunity platform for young people across Ghana and the UK.",
+  openGraph: {
+    siteName: SITE_NAME,
+    type: "website",
+    images: DEFAULT_OG_IMAGES,
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: DEFAULT_OG_IMAGES,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
