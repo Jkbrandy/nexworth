@@ -40,7 +40,8 @@ export type NotificationType =
   | "password_changed"
   | "generic"
   | "merchant_discount_code_expiring"
-  | "merchant_application_approved";
+  | "merchant_application_approved"
+  | "kyc_approved";
 
 export interface AppNotification {
   id: string;
@@ -72,6 +73,8 @@ export interface MerchantLocation {
   city?: string;
   country: string;
   mapsUrl?: string;
+  /** GeoJSON Point, [lng, lat] — resolved (best-effort) from mapsUrl after creation. [0, 0] means not yet resolved. */
+  coordinates?: { type: "Point"; coordinates: [number, number] };
 }
 
 export interface MerchantAccount {

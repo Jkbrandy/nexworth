@@ -7,7 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Rethink Sans", "Rethink Sans Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    "Rethink Sans", "Rethink Sans Fallback", ui-sans-serif, system-ui,
+    sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -65,7 +67,7 @@
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.943 0.029 294.588);
-  --accent-foreground: oklch(0.380 0.189 293.745);
+  --accent-foreground: oklch(0.38 0.189 293.745);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -164,8 +166,21 @@
   --toastify-toast-shadow: 0 8px 28px -8px rgb(0 0 0 / 0.45);
 }
 
+/* react-toastify (v11) never renders a `.Toastify__toast-body` wrapper —
+   the icon and message are direct flex children of `.Toastify__toast`
+   itself (it's the library's own base rule that sets display:flex;
+   align-items:center — see node_modules/react-toastify/dist/ReactToastify.css).
+   Icon-to-message spacing has to live here, as `gap`, with the icon's own
+   default margin (below) zeroed out so the two don't stack. */
 .Toastify__toast {
-  font-family: "Rethink Sans", "Rethink Sans Fallback", ui-sans-serif, system-ui, sans-serif !important;
+  gap: 14px;
+  font-family:
+    "Rethink Sans", "Rethink Sans Fallback", ui-sans-serif, system-ui,
+    sans-serif !important;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--card-foreground);
   border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
   border-left-width: 4px;
   border-left-color: var(--primary);
@@ -185,17 +200,6 @@
 
 .Toastify__toast--info {
   border-left-color: var(--primary);
-}
-
-.Toastify__toast-body {
-  gap: 20px;
-  padding: 0;
-  align-items: center;
-  font-family: "Rethink Sans", "Rethink Sans Fallback", ui-sans-serif, system-ui, sans-serif !important;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.35;
-  color: var(--card-foreground);
 }
 
 .Toastify__toast-icon {

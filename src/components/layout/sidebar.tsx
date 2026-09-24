@@ -44,7 +44,6 @@ interface NavItem {
 const userNav: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/credential", label: "My Credential", icon: IdCard },
-  { href: "/benefits", label: "Benefits", icon: Tag },
   { href: "/find-merchants", label: "Find Merchants", icon: MapPin },
   { href: "/transactions", label: "Transactions", icon: Receipt },
   { href: "/notifications", label: "Notifications", icon: Bell },

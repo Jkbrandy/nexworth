@@ -11,7 +11,7 @@ import { AccessStatusCard } from "@/components/dashboard/access-status-card";
 import { useSession } from "@/hooks/use-session";
 import { useCredential } from "@/hooks/use-credential";
 import { apiFetch } from "@/lib/api";
-import { MARKET_DEFAULT_VIEW } from "@/lib/city-coordinates";
+import { MARKET_DEFAULT_VIEW, merchantLatLng } from "@/lib/city-coordinates";
 import type { MapMerchant } from "@/components/find-merchants/merchants-map";
 
 const MerchantsMap = dynamic(() => import("@/components/find-merchants/merchants-map").then((m) => m.MerchantsMap), {
@@ -25,7 +25,7 @@ interface DashboardMerchant {
   category: string;
   country: "GH" | "UK";
   discountPercent?: number;
-  locations: { city?: string }[];
+  locations: { city?: string; coordinates?: { coordinates: [number, number] } }[];
 }
 
 const quickActions = [
@@ -57,6 +57,7 @@ export default function DashboardPage() {
         discountPercent: m.discountPercent,
         city: m.locations[0]!.city!,
         country: m.country,
+        coords: merchantLatLng(m.locations[0]!) ?? undefined,
       }));
   }, [merchants, user]);
 

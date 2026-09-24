@@ -144,7 +144,7 @@ function HeaderRight({ pathname }: { pathname: string }) {
   if (pathname === "/sign-up") {
     return (
       <p className="text-sm text-muted-foreground">
-        Already have an account?{" "}
+        <span className="hidden sm:inline">Already have an account? </span>
         <Link href="/sign-in" className="font-medium text-primary hover:underline">
           Sign in
         </Link>

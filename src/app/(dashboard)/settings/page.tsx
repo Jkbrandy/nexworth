@@ -97,7 +97,7 @@ function ProfilePhotoUploader({ user }: { user: SessionUser }) {
         disabled={uploading}
         aria-label="Update profile photo"
         className={cn(
-          "absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100",
+          "absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/50 text-white opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100",
           uploading && "opacity-100",
         )}
       >

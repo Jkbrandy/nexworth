@@ -1,9 +1,8 @@
 /**
- * City-center coordinates for the Find Merchants map view. No geocoding
- * service is wired up (merchants only ever supply a city name, not an
- * address lookup), so markers are grouped by city rather than exact
- * address — good enough for "where roughly are merchants near me" without
- * needing a paid geocoding API.
+ * City-center coordinates for the Find Merchants map view — the fallback
+ * used when a merchant's own location (see `merchantLatLng` below) hasn't
+ * resolved to a precise point yet, so its pin still lands somewhere
+ * reasonable instead of being dropped from the map entirely.
  */
 export const CITY_COORDINATES: Record<string, [number, number]> = {
   // Ghana
@@ -30,3 +29,16 @@ export const MARKET_DEFAULT_VIEW: Record<"GH" | "UK", [number, number]> = {
   GH: CITY_COORDINATES.Accra,
   UK: CITY_COORDINATES.London,
 };
+
+/**
+ * A merchant's own precise [lat, lng], if its Maps link has resolved to one —
+ * `[0, 0]` is the schema's "not resolved yet" placeholder, not a real point
+ * (it's the middle of the Gulf of Guinea), so it's treated as absent here.
+ */
+export function merchantLatLng(location: { coordinates?: { coordinates: [number, number] } }): [number, number] | null {
+  const point = location.coordinates?.coordinates;
+  if (!point) return null;
+  const [lng, lat] = point;
+  if (lng === 0 && lat === 0) return null;
+  return [lat, lng];
+}

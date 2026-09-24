@@ -45,9 +45,13 @@ export default function OnboardingVerificationPage() {
         method: "PATCH",
         body: formData,
       });
+      // No explicit navigation here — refresh() updates user.onboardingStep,
+      // and the onboarding layout's own effect (watching that value) is what
+      // moves to the next step. Pushing here too raced against that effect:
+      // two navigations firing for the same transition, which showed up as
+      // the form flickering/resetting before landing on the welcome step.
       await refresh();
       toast.success("Verification submitted.");
-      router.push("/onboarding/welcome");
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
     } finally {

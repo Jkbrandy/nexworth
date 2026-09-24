@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { ShieldCheck, Tag, Globe2, Lock, FileClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,6 @@ const benefits = [
 ];
 
 export default function OnboardingWelcomePage() {
-  const router = useRouter();
   const { refresh } = useSession();
   const [submitting, setSubmitting] = useState(false);
 
@@ -24,9 +22,11 @@ export default function OnboardingWelcomePage() {
     setSubmitting(true);
     try {
       await apiFetch("/users/me/onboarding-complete", { method: "POST" });
+      // No explicit navigation here — see the matching comment in
+      // onboarding/verification/page.tsx. refresh() sets onboardingStep to
+      // "complete", and the onboarding layout's effect takes it from there.
       await refresh();
       toast.success("You're all set!");
-      router.push("/dashboard");
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
     } finally {
